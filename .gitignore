@@ -10,3 +10,4 @@ wp4779082.jpg
 .env
 telegrambots.egg-info/
 dist/
+test.json

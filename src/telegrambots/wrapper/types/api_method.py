@@ -20,11 +20,13 @@ class TelegramBotsMethod(Generic[TResult], ABC, TelegramBotsObject):
         return self.serialize(False, self, None)
 
     @final
-    def get_request_result(
-            self, response: dict[str, Any], client: Any) -> TResult:
+    def get_request_result(self, response: dict[str, Any], client: Any) -> TResult:
         return TelegramBotsApiResult.deserialize(
-            response, {
-                'result': self._return_type,
-                'pinned_message': [Message],  # in Chat object
-                'reply_to_message': [Message]
-            }, client)  # type: ignore
+            response,
+            custom_types={
+                "result": self._return_type,
+                "pinned_message": [Message],  # in Chat object
+                "reply_to_message": [Message],
+            },
+            client=client,
+        )  # type: ignore
