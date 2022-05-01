@@ -12,9 +12,9 @@ can be installed separately.
 
 - All objects and methods ( 6.0 ) are implemented in python using `dataclass`es.
 
-- The serialization stuff are done to convert api python objects to json-like (`dict`, `list`) objects and then json-string and reverse.
+- Serialization stuff are done to convert api python objects to json-like (`dict`, `list`) objects and then json-string and reverse.
 
-- A simple and async http client is available using aiohttp to send requests
+- A simple and async http client is available that uses aiohttp to send requests.
 
 _This package contains no full-featured client or bound methods! there're only some classes and a client._
 
