@@ -145,9 +145,16 @@ class TelegramBotsObject(metaclass=ABCMeta):
 
                 # ! Fix this
                 if len(info[x]) > 1:
-                    raise ValueError(
-                        f"Multiple types for {x} in {object_type.__name__} not Supported yet"
-                    )
+                    # it occurs only ones: Message | bool
+                    if isinstance(data[x], dict):
+                        type_to_convert: type[TelegramBotsObject] = next(
+                            t for t in info[x] if issubclass(t, TelegramBotsObject)
+                        )
+                        new_data[
+                            name_replacements.get(x, x)
+                        ] = type_to_convert.deserialize(data[x], custom_types, client)
+                    else:
+                        new_data[name_replacements.get(x, x)] = None
 
                 elif issubclass(info[x][0], TelegramBotsObject):
                     new_data[name_replacements.get(x, x)] = info[x][0].deserialize(

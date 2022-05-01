@@ -9,7 +9,7 @@ from ..objects.inline_keyboard_markup import InlineKeyboardMarkup
 
 
 @dataclass(init=True, repr=True, slots=True)
-class EditMessageText(TelegramBotsMethod[TelegramBotsApiResult[Message | bool]]):
+class EditMessageText(TelegramBotsMethod[TelegramBotsApiResult[Optional[Message]]]):
     # --- description here ---
     """Use this method to edit text and [game](https://core.telegram.org/bots/api/#games) messages. On success, if the edited message is not an inline message, the edited [Message](https://core.telegram.org/bots/api/#message) is returned, otherwise *True* is returned.
 

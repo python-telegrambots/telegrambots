@@ -32,12 +32,9 @@ async def test_set_chat_title(test_config: TestConfigs):
     )  # bot should have change group info rights
 
     chat_id = test_config.super_group_chat_id_1
-    new_title = "new title"
+    new_title = "new title 2"
 
-    result = await client(SetChatTitle(chat_id, new_title))
-
-    assert isinstance(result, bool)
-    assert result is True
+    await client(SetChatTitle(chat_id, new_title))
 
     chat = await client(GetChat(chat_id))
 
@@ -51,12 +48,9 @@ async def test_set_chat_description(test_config: TestConfigs):
     )  # bot should have change group info rights
 
     chat_id = test_config.super_group_chat_id_1
-    new_description = "new description"
+    new_description = "new description 2"
 
-    result = await client(SetChatDescription(chat_id, new_description))
-
-    assert isinstance(result, bool)
-    assert result is True
+    await client(SetChatDescription(chat_id, new_description))
 
     chat = await client(GetChat(chat_id))
 
