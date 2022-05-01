@@ -408,3 +408,8 @@ class Message(TelegramBotsObject, ClientTargetable):
     )
     """*Optional*. Inline keyboard attached to the message. `login_url` buttons are represented as ordinary `url` buttons.
     """
+
+    def __getattr__(self, item: str):
+        if item == "from":
+            return self.from_user
+        raise AttributeError(item)

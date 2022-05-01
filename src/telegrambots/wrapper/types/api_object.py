@@ -1,5 +1,6 @@
 from abc import ABCMeta
 import dataclasses
+import json
 from typing import Any, Optional, TypeVar, cast
 
 from .._client_utilities._client_setter import ClientSetter
@@ -182,3 +183,8 @@ class TelegramBotsObject(metaclass=ABCMeta):
         return result
 
     # endregion
+
+    def pretty_str(self):
+        return json.dumps(
+            self.serialize(), indent=4, sort_keys=True, ensure_ascii=False
+        )
