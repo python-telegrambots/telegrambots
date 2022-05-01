@@ -89,12 +89,12 @@ async def main():
     file_path_1 = Path(__file__).parent.resolve().joinpath("test_photo_1.jpg")
     file_path_2 = Path(__file__).parent.resolve().joinpath("test_photo_2.jpg")
 
-    with InputFile(file_path_1) as file:
-        with SendMediaGroup(
+    with InputFile(file_path_1) as file: # You need to open files manually if you're using Path.
+        with SendMediaGroup( # All sub files will be closed after this
             123456789,
             [
                 InputMediaPhoto(file, "My first photo"),
-                InputMediaPhoto(InputFile(open(file_path_2, "rb"), "test_photo_2.jpg")),
+                InputMediaPhoto(InputFile(open(file_path_2, "rb"), "test_photo_2.jpg")), # Directly open and use file.
                 InputMediaPhoto("https://imgur.com/t/funny/MpMGFRQ"),
             ],
         ) as send_media_group:
