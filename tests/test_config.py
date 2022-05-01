@@ -12,6 +12,7 @@ class TestConfigs:
     private_chat_id_1: int
     private_chat_id_2: int
     super_group_chat_id_1: int
+    super_group_1_existing_message_id: int
 
 
 @pytest.fixture(scope="package")
@@ -24,4 +25,7 @@ def test_config():
         private_chat_id_1=int(cast(str, os.getenv("private_chat_id_1"))),
         private_chat_id_2=int(cast(str, os.getenv("private_chat_id_2"))),
         super_group_chat_id_1=int(cast(str, os.getenv("super_group_chat_id_1"))),
+        super_group_1_existing_message_id=int(
+            cast(str, os.getenv("super_group_1_existing_message_id"))
+        ),
     )
