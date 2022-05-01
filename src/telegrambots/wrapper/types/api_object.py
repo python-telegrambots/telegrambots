@@ -143,7 +143,6 @@ class TelegramBotsObject(metaclass=ABCMeta):
         for x in data:
             if x in info:
 
-                # ! Fix this
                 if len(info[x]) > 1:
                     # it occurs only ones: Message | bool
                     if isinstance(data[x], dict):
