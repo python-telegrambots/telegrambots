@@ -1,13 +1,11 @@
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..api_method import TelegramBotsMethod
-from ..api_result import TelegramBotsApiResult
-
+from ..api_method import TelegramBotsMethodNoOutput
 
 
 @dataclass(init=True, repr=True, slots=True)
-class DeleteMessage(TelegramBotsMethod[TelegramBotsApiResult[bool]]):
+class DeleteMessage(TelegramBotsMethodNoOutput):
     # --- description here ---
     """Use this method to delete a message, including service messages, with the following limitations:  
     \\- A message can only be deleted if it was sent less than 48 hours ago.  

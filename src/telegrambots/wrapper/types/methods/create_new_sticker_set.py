@@ -1,14 +1,13 @@
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
-from ..api_multipart_method import TelegramBotsMultipartMethod
-from ..api_result import TelegramBotsApiResult
+from ..api_multipart_method import TelegramBotsMultipartMethodNoOutput
 from ..objects.mask_position import MaskPosition
 from ..objects.input_file import InputFile
 
 
 @dataclass(init=True, repr=True, slots=True)
-class CreateNewStickerSet(TelegramBotsMultipartMethod[TelegramBotsApiResult[bool]]):
+class CreateNewStickerSet(TelegramBotsMultipartMethodNoOutput):
     # --- description here ---
     """Use this method to create a new sticker set owned by a user. The bot will be able to edit the sticker set thus created. You **must** use exactly one of the fields *png\\_sticker*, *tgs\\_sticker*, or *webm\\_sticker*. Returns *True* on success.
     
