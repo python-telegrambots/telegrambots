@@ -14,4 +14,5 @@ class BotCommandScopeDefault(BotCommandScope):
     # --- properties here ---
     @property
     def type(self) -> str:
+        self._type = "default"
         return self._type

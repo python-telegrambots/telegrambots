@@ -1,8 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Literal
 
-from ..._client_utilities import ClientTargetable
-from ..api_object import TelegramBotsObject
 from .passport_element_error import PassportElementError
 
 
@@ -15,9 +13,10 @@ class PassportElementErrorSelfie(PassportElementError):
     """
 
     # --- properties here ---
-    source: str = field(metadata={"ac_type": [str], "ac_name": "source"})
-    """Error source, must be *selfie*
-    """
+    @property
+    def source(self) -> str:
+        self._source = "selfie"
+        return self._source
 
     type: Literal[
         "passport", "driver_license", "identity_card", "internal_passport"

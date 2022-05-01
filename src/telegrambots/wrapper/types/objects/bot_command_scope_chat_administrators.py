@@ -12,12 +12,11 @@ class BotCommandScopeChatAdministrators(BotCommandScope):
     """
 
     # --- properties here ---
-    chat_id: int | str = field(
-        metadata={"ac_type": [int, str], "ac_name": "chat_id"})
+    chat_id: int | str = field(metadata={"ac_type": [int, str], "ac_name": "chat_id"})
     """Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
     """
 
     @property
     def type(self) -> str:
-        self._type = 'chat_administrators'
+        self._type = "chat_administrators"
         return self._type

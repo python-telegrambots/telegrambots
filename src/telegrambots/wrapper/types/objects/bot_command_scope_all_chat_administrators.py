@@ -14,5 +14,5 @@ class BotCommandScopeAllChatAdministrators(BotCommandScope):
     # --- properties here ---
     @property
     def type(self) -> str:
-        self._type = 'all_chat_administrators'
+        self._type = "all_chat_administrators"
         return self._type

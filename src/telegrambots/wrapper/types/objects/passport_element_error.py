@@ -22,3 +22,14 @@ class PassportElementError(abc.ABC, TelegramBotsObject, ClientTargetable):
 
     More info at: https://core.telegram.org/bots/api/#passportelementerror
     """
+
+    _source: str = dataclasses.field(
+        init=False,
+        repr=True,
+        default="unspecified",
+        metadata={"ac_type": [str], "ac_name": "source"},
+    )
+
+    @property
+    def source(self) -> str:
+        raise NotImplementedError()
