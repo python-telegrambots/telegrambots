@@ -11,7 +11,7 @@ from .photo_size import PhotoSize
 class Audio(TelegramBotsObject, ClientTargetable):
     # --- description here ---
     """This object represents an audio file to be treated as music by the Telegram clients.
-    
+
     More info at: https://core.telegram.org/bots/api/#audio
     """
 
@@ -20,7 +20,9 @@ class Audio(TelegramBotsObject, ClientTargetable):
     """Identifier for this file, which can be used to download or reuse the file
     """
 
-    file_unique_id: str = field(metadata={"ac_type": [str], "ac_name": "file_unique_id"})
+    file_unique_id: str = field(
+        metadata={"ac_type": [str], "ac_name": "file_unique_id"}
+    )
     """Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     """
 
@@ -28,27 +30,38 @@ class Audio(TelegramBotsObject, ClientTargetable):
     """Duration of the audio in seconds as defined by sender
     """
 
-    performer: Optional[str] = field(default=None, metadata={"ac_type": [str], "ac_name": "performer"})
+    performer: Optional[str] = field(
+        default=None, metadata={"ac_type": [str], "ac_name": "performer"}
+    )
     """*Optional*. Performer of the audio as defined by sender or by audio tags
     """
 
-    title: Optional[str] = field(default=None, metadata={"ac_type": [str], "ac_name": "title"})
+    title: Optional[str] = field(
+        default=None, metadata={"ac_type": [str], "ac_name": "title"}
+    )
     """*Optional*. Title of the audio as defined by sender or by audio tags
     """
 
-    file_name: Optional[str] = field(default=None, metadata={"ac_type": [str], "ac_name": "file_name"})
+    file_name: Optional[str] = field(
+        default=None, metadata={"ac_type": [str], "ac_name": "file_name"}
+    )
     """*Optional*. Original filename as defined by sender
     """
 
-    mime_type: Optional[str] = field(default=None, metadata={"ac_type": [str], "ac_name": "mime_type"})
+    mime_type: Optional[str] = field(
+        default=None, metadata={"ac_type": [str], "ac_name": "mime_type"}
+    )
     """*Optional*. MIME type of the file as defined by sender
     """
 
-    file_size: Optional[int] = field(default=None, metadata={"ac_type": [int], "ac_name": "file_size"})
+    file_size: Optional[int] = field(
+        default=None, metadata={"ac_type": [int], "ac_name": "file_size"}
+    )
     """*Optional*. File size in bytes
     """
 
-    thumb: Optional[PhotoSize] = field(default=None, metadata={"ac_type": [PhotoSize], "ac_name": "thumb"})
+    thumb: Optional[PhotoSize] = field(
+        default=None, metadata={"ac_type": [PhotoSize], "ac_name": "thumb"}
+    )
     """*Optional*. Thumbnail of the album cover to which the music file belongs
     """
-

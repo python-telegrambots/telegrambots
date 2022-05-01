@@ -21,7 +21,8 @@ class Animation(TelegramBotsObject, ClientTargetable):
     """
 
     file_unique_id: str = field(
-        metadata={"ac_type": [str], "ac_name": "file_unique_id"})
+        metadata={"ac_type": [str], "ac_name": "file_unique_id"}
+    )
     """Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
     """
 
@@ -38,21 +39,25 @@ class Animation(TelegramBotsObject, ClientTargetable):
     """
 
     thumb: Optional[PhotoSize] = field(
-        default=None, metadata={"ac_type": [PhotoSize], "ac_name": "thumb"})
+        default=None, metadata={"ac_type": [PhotoSize], "ac_name": "thumb"}
+    )
     """*Optional*. Animation thumbnail as defined by sender
     """
 
     file_name: Optional[str] = field(
-        default=None, metadata={"ac_type": [str], "ac_name": "file_name"})
+        default=None, metadata={"ac_type": [str], "ac_name": "file_name"}
+    )
     """*Optional*. Original animation filename as defined by sender
     """
 
     mime_type: Optional[str] = field(
-        default=None, metadata={"ac_type": [str], "ac_name": "mime_type"})
+        default=None, metadata={"ac_type": [str], "ac_name": "mime_type"}
+    )
     """*Optional*. MIME type of the file as defined by sender
     """
 
     file_size: Optional[int] = field(
-        default=None, metadata={"ac_type": [int], "ac_name": "file_size"})
+        default=None, metadata={"ac_type": [int], "ac_name": "file_size"}
+    )
     """*Optional*. File size in bytes
     """
