@@ -19,8 +19,9 @@ class TelegramBotsMethod(Generic[TResult], ABC, TelegramBotsObject):
     def endpoint(self) -> str:
         return self._endpoint
 
+    @final
     def get_request_body(self):
-        return self.serialize(False, self, None)
+        return self.serialize(self)
 
     def get_request_result(self, response: dict[str, Any], client: Any) -> TResult:
         return TelegramBotsApiResult.deserialize(

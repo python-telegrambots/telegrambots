@@ -55,39 +55,35 @@ class TelegramBotsObject(metaclass=ABCMeta):
 
     def serialize(
         self,
-        is_multipart_obj: bool = False,
         master_obj: Any = None,
         parent_key: Optional[str] = None,
     ) -> dict[str, Any] | Any:
-        return self.serialize_dataclass(self, is_multipart_obj, master_obj, parent_key)
+        return self.serialize_dataclass(self, master_obj, parent_key)
 
     @staticmethod
     def serialize_dataclass(
         obj: Any | list[Any] | list[list[Any]],
-        is_multipart_obj: bool = False,
         master_obj: Any = None,
         parent_key: Optional[str] = None,
     ) -> dict[str, Any] | list[Any]:
 
         if isinstance(obj, (list, tuple)):
             return [
-                TelegramBotsObject.serialize_dataclass(
-                    item, is_multipart_obj, master_obj, parent_key
-                )
+                TelegramBotsObject.serialize_dataclass(item, master_obj, parent_key)
                 for item in obj
             ]
         else:
             # Hmmm
             return {
                 x: y
-                for x, y in (
+                for x, y in (  # type: ignore
                     (
                         key,
                         (
-                            value.serialize(is_multipart_obj, master_obj, key)
+                            value.serialize(master_obj, key)
                             if isinstance(value, TelegramBotsObject)
                             else TelegramBotsObject.serialize_dataclass(
-                                value, is_multipart_obj, master_obj, key  # type: ignore
+                                value, master_obj, key  # type: ignore
                             )
                             if isinstance(value, (list, tuple))
                             else value

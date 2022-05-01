@@ -39,9 +39,9 @@ You can use our async client to make requests.
 ```py
 import asyncio
 
-from src.telegrambots.wrapper import TelegramBotsClient
-from src.telegrambots.wrapper.types.methods import SendMessage
-from src.telegrambots.wrapper.types.objects import (
+from telegrambots.wrapper import TelegramBotsClient
+from telegrambots.wrapper.types.methods import SendMessage
+from telegrambots.wrapper.types.objects import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
 )
@@ -78,9 +78,9 @@ Send a file or even multiple files ( local or online ).
 import asyncio
 from pathlib import Path
 
-from src.telegrambots.wrapper import TelegramBotsClient
-from src.telegrambots.wrapper.types.methods import SendMediaGroup
-from src.telegrambots.wrapper.types.objects import InputFile, InputMediaPhoto
+from telegrambots.wrapper import TelegramBotsClient
+from telegrambots.wrapper.types.methods import SendMediaGroup
+from telegrambots.wrapper.types.objects import InputFile, InputMediaPhoto
 
 
 async def main():
@@ -112,8 +112,8 @@ Send multiple requests using one `aiohttp.ClientSession`.
 ``` py
 import asyncio
 
-from src.telegrambots.wrapper import TelegramBotsClient
-from src.telegrambots.wrapper.types.methods import (
+from telegrambots.wrapper import TelegramBotsClient
+from telegrambots.wrapper.types.methods import (
     SendMessage,
     EditMessageText,
     DeleteMessage,
@@ -156,8 +156,8 @@ Print things! usual way or pretty.
 ```py
 import asyncio
 
-from src.telegrambots.wrapper import TelegramBotsClient
-from src.telegrambots.wrapper.types.methods import SendMessage
+from telegrambots.wrapper import TelegramBotsClient
+from telegrambots.wrapper.types.methods import SendMessage
 
 
 async def main():
@@ -193,6 +193,42 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+```
+
+Manually serialize or deserialize any object.
+
+```py
+import json
+from telegrambots.wrapper.types.objects import Update
+from telegrambots.wrapper.serializations import serialize, deserialize
+
+json_object = """
+{
+    "update_id":10000,
+    "callback_query": {
+        "id": "4382bfdwdsb323b2d9",
+        "from": {
+            "last_name":"Test Lastname",
+            "type": "private",
+            "id":1111111,
+            "first_name":"Test Firstname",
+            "username":"Testusername",
+            "is_bot":false
+        },
+        "chat_instance":"4382bfdwdsb323b2d9",
+        "data": "Data from button callback",
+        "inline_message_id": "1234csdbsk4839"
+    }
+}
+"""
+
+update = deserialize(Update, json.loads(json_object))  # type of Update
+
+dict_like = serialize(update)
+
+print(dict_like)
+# {'update_id': 10000, 'callback_query': {'id': '4382bfdwdsb323b2d9', 'from': {'id': 1111111, 'is_bot': False, 'first_name': 'Test Firstname', 'last_name': 'Test Lastname', 'username': 'Testusername'}, 'chat_instance': '4382bfdwdsb323b2d9', 'inline_message_id': '1234csdbsk4839', 'data': 'Data from button callback'}}
+
 ```
 
 ## Install

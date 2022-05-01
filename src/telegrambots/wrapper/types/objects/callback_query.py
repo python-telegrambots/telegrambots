@@ -52,3 +52,8 @@ class CallbackQuery(TelegramBotsObject, ClientTargetable):
     )
     """*Optional*. Short name of a [Game](https://core.telegram.org/bots/api/#games) to be returned, serves as the unique identifier for the game
     """
+
+    def __getattr__(self, item: str):
+        if item == "from":
+            return self.from_user
+        raise AttributeError(item)

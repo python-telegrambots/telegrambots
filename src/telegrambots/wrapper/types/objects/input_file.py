@@ -77,7 +77,6 @@ class InputFile(TelegramBotsObject, ClientTargetable):
 
     def serialize(
         self,
-        is_multipart_obj: bool = False,
         master_obj: Any = None,
         parent_key: Optional[str] = None,
     ) -> dict[str, Any] | Any:

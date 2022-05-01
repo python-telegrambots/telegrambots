@@ -1,14 +1,10 @@
-from typing import Any, Generic, final
+from typing import Any, Generic
 from .api_method import TelegramBotsMethod, TelegramBotsMethodNoOutput, TResult
 
 
 class TelegramBotsMultipartMethod(Generic[TResult], TelegramBotsMethod[TResult]):
     def __init__(self, endpoint: str, return_type: list[type[Any]]) -> None:
         super().__init__(endpoint, return_type)
-
-    @final
-    def get_request_body(self):
-        return self.serialize(True, self)
 
     def __enter__(self):
         return self
@@ -25,10 +21,6 @@ class TelegramBotsMultipartMethodNoOutput(TelegramBotsMethodNoOutput):
     def __init__(self, endpoint: str) -> None:
         """This class is used to represent the result of an API call. It has no output."""
         super().__init__(endpoint, [None])  # type: ignore
-
-    @final
-    def get_request_body(self):
-        return self.serialize(True, self)
 
     def __enter__(self):
         return self
