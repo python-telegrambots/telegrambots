@@ -36,7 +36,10 @@ class ChatMember(abc.ABC, TelegramBotsObject, ClientTargetable):
         from .chat_member_owner import ChatMemberOwner
         from .chat_member_restricted import ChatMemberRestricted
 
-        if not isinstance(data, dict):
+        if isinstance(data, list):
+            return [cls.deserialize(d, custom_types, client) for d in data]  # type: ignore
+
+        if not isinstance(data, dict):  # type: ignore
             raise ValueError(f"Expected dict, got {type(data)}")
 
         if "status" not in data:
