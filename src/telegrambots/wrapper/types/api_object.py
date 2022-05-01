@@ -14,37 +14,43 @@ class TelegramBotsObject(metaclass=ABCMeta):
     def __init__(self, **kwargs: dict[str, Any]) -> None:
         self._metadata: dict[str, Any] = {}
 
-    def set_metadata(self, key: str, value: TValue) -> TValue:
-        try:
-            self._metadata[key] = value
-        except AttributeError:
-            self._metadata = {key: value}
+    # region Metadata
+
+    def __ensure_metadata(self):
+        if not hasattr(self, "_metadata"):
+            self._metadata = {}
+
+    def _set_metadata(self, key: str, value: TValue) -> TValue:
+        self.__ensure_metadata()
+        self._metadata[key] = value
         return value
 
+    def has_metadata(self, key: str) -> bool:
+        self.__ensure_metadata()
+        return key in self._metadata
+
     def get_metadata(self, key: str, default_value: TValue) -> TValue:
-        try:
-            if key in self._metadata:
-                return cast(TValue, self._metadata[key])
-            else:
-                self._metadata[key] = default_value
-        except AttributeError:
-            self._metadata = {key: default_value}
+        self.__ensure_metadata()
+        if key in self._metadata:
+            return cast(TValue, self._metadata[key])
+        else:
+            self._metadata[key] = default_value
         return default_value
 
     def append_list_metadata(self, key: str, value: TValue) -> TValue:
-        try:
+        if self.has_metadata(key):
             self._metadata[key].append(value)
-        except AttributeError:
-            self._metadata = {key: [value]}
-        except KeyError:
+        else:
             self._metadata[key] = [value]
         return value
 
     def get_list_metadata(self, key: str) -> list[Any]:
-        try:
-            return self._metadata[key]
-        except (AttributeError, KeyError):
-            return []
+        default: list[Any] = []
+        return self.get_metadata(key, default)
+
+    # endregion
+
+    # region Serialize
 
     def serialize(
         self,
@@ -53,6 +59,51 @@ class TelegramBotsObject(metaclass=ABCMeta):
         parent_key: Optional[str] = None,
     ) -> dict[str, Any] | Any:
         return self.serialize_dataclass(self, is_multipart_obj, master_obj, parent_key)
+
+    @staticmethod
+    def serialize_dataclass(
+        obj: Any | list[Any] | list[list[Any]],
+        is_multipart_obj: bool = False,
+        master_obj: Any = None,
+        parent_key: Optional[str] = None,
+    ) -> dict[str, Any] | list[Any]:
+
+        if isinstance(obj, (list, tuple)):
+            return [
+                TelegramBotsObject.serialize_dataclass(
+                    item, is_multipart_obj, master_obj, parent_key
+                )
+                for item in obj
+            ]
+        else:
+            # Hmmm
+            return {
+                x: y
+                for x, y in (
+                    (
+                        key,
+                        (
+                            value.serialize(is_multipart_obj, master_obj, key)
+                            if isinstance(value, TelegramBotsObject)
+                            else TelegramBotsObject.serialize_dataclass(
+                                value, is_multipart_obj, master_obj, key  # type: ignore
+                            )
+                            if isinstance(value, (list, tuple))
+                            else value
+                        ),
+                    )
+                    for key, value in (
+                        (x.metadata["ac_name"], getattr(obj, x.metadata["ac_name"]))
+                        for x in dataclasses.fields(obj)
+                    )
+                    if value is not None
+                )
+                if y is not None
+            }
+
+    # endregion
+
+    # region Deserialize
 
     @classmethod
     def deserialize(
@@ -73,52 +124,17 @@ class TelegramBotsObject(metaclass=ABCMeta):
         return TelegramBotsObject._deserialize(object_type, data, custom_types, client)
 
     @staticmethod
-    def serialize_dataclass(
-        obj: "TelegramBotsObject",
-        is_multipart_obj: bool = False,
-        master_obj: Any = None,
-        parent_key: Optional[str] = None,
-    ) -> dict[str, Any]:
-
-        if isinstance(obj, (list, tuple)):
-            return [
-                TelegramBotsObject.serialize_dataclass(
-                    item, is_multipart_obj, master_obj, parent_key  # type: ignore
-                )
-                for item in obj  # type: ignore
-            ]  # type: ignore
-
-        fields = dataclasses.fields(obj)
-        fields_values = (
-            (x.metadata["ac_name"], getattr(obj, x.metadata["ac_name"])) for x in fields
-        )
-
-        non_none_fields_values = {x[0]: x[1] for x in fields_values if x[1] is not None}
-
-        for x in non_none_fields_values:
-            value = non_none_fields_values[x]
-            if isinstance(value, TelegramBotsObject):
-                non_none_fields_values[x] = value.serialize(
-                    is_multipart_obj, master_obj, x
-                )
-            elif isinstance(value, (list, tuple)):
-                results = [
-                    TelegramBotsObject.serialize_dataclass(
-                        x, is_multipart_obj, master_obj, x  # type: ignore
-                    )
-                    for x in value  # type: ignore
-                ]
-                non_none_fields_values[x] = [x for x in results if x is not None]
-        # Remove None from dict
-        return {x: y for x, y in non_none_fields_values.items() if y is not None}
-
-    @staticmethod
     def _deserialize(
         object_type: type[T],
         data: dict[str, Any] | list[Any],
         custom_types: dict[str, list[type[Any]]] | None = None,
         client: Any = None,
     ) -> T:
+
+        if isinstance(data, list):
+            return [
+                object_type.deserialize(x, custom_types, client) for x in data
+            ]  # type: ignore
 
         fields = dataclasses.fields(object_type)
         info = {x.metadata["ac_name"]: x.metadata["ac_type"] for x in fields}
@@ -133,11 +149,6 @@ class TelegramBotsObject(metaclass=ABCMeta):
             for x in fields
             if x.name != x.metadata["ac_name"]
         }
-
-        if isinstance(data, list):
-            return [
-                object_type.deserialize(x, custom_types, client) for x in data
-            ]  # type: ignore
 
         new_data = {}
         for x in data:
@@ -169,3 +180,5 @@ class TelegramBotsObject(metaclass=ABCMeta):
             setattr(result, "_client", client)
 
         return result
+
+    # endregion
