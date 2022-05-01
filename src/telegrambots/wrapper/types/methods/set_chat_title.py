@@ -14,7 +14,7 @@ class SetChatTitle(TelegramBotsMethodNoOutput):
 
     def __new__(cls, *args: Any, **kwargs: Any):
         obj = object.__new__(cls)
-        TelegramBotsMethod.__init__(obj, "setChatTitle", [bool])  # type: ignore
+        TelegramBotsMethodNoOutput.__init__(obj, "setChatTitle")  # type: ignore
         return obj
 
     # --- arguments here ---

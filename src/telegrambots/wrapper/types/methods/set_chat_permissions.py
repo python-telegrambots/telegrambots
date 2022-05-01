@@ -15,7 +15,7 @@ class SetChatPermissions(TelegramBotsMethodNoOutput):
 
     def __new__(cls, *args: Any, **kwargs: Any):
         obj = object.__new__(cls)
-        TelegramBotsMethod.__init__(obj, "setChatPermissions", [bool])  # type: ignore
+        TelegramBotsMethodNoOutput.__init__(obj, "setChatPermissions")  # type: ignore
         return obj
 
     # --- arguments here ---

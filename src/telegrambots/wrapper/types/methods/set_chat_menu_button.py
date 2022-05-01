@@ -15,7 +15,7 @@ class SetChatMenuButton(TelegramBotsMethodNoOutput):
 
     def __new__(cls, *args: Any, **kwargs: Any):
         obj = object.__new__(cls)
-        TelegramBotsMethod.__init__(obj, "setChatMenuButton", [bool])  # type: ignore
+        TelegramBotsMethodNoOutput.__init__(obj, "setChatMenuButton")  # type: ignore
         return obj
 
     # --- arguments here ---

@@ -1,5 +1,5 @@
 from typing import Any, Generic, final
-from .api_method import TelegramBotsMethod, TResult
+from .api_method import TelegramBotsMethod, TelegramBotsMethodNoOutput, TResult
 
 
 class TelegramBotsMultipartMethod(Generic[TResult], TelegramBotsMethod[TResult]):
@@ -19,7 +19,7 @@ class TelegramBotsMultipartMethod(Generic[TResult], TelegramBotsMethod[TResult])
             obj.close()
 
 
-class TelegramBotsMultipartMethodNoOutput(TelegramBotsMethod[None]):
+class TelegramBotsMultipartMethodNoOutput(TelegramBotsMethodNoOutput):
     """This class is used to represent the result of an API call. It has no output."""
 
     def __init__(self, endpoint: str) -> None:
@@ -27,5 +27,13 @@ class TelegramBotsMultipartMethodNoOutput(TelegramBotsMethod[None]):
         super().__init__(endpoint, [None])  # type: ignore
 
     @final
-    def get_request_result(self, response: dict[str, Any], client: Any):
-        return None
+    def get_request_body(self):
+        return self.serialize(True, self)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any):
+        to_dispose = self.get_list_metadata("dispose_these")
+        for obj in to_dispose:
+            obj.close()

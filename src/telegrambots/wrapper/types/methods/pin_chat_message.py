@@ -14,7 +14,7 @@ class PinChatMessage(TelegramBotsMethodNoOutput):
 
     def __new__(cls, *args: Any, **kwargs: Any):
         obj = object.__new__(cls)
-        TelegramBotsMethod.__init__(obj, "pinChatMessage", [bool])  # type: ignore
+        TelegramBotsMethodNoOutput.__init__(obj, "pinChatMessage")  # type: ignore
         return obj
 
     # --- arguments here ---

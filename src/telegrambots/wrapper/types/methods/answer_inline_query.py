@@ -16,7 +16,7 @@ class AnswerInlineQuery(TelegramBotsMethodNoOutput):
 
     def __new__(cls, *args: Any, **kwargs: Any):
         obj = object.__new__(cls)
-        TelegramBotsMethod.__init__(obj, "answerInlineQuery", [bool])  # type: ignore
+        TelegramBotsMethodNoOutput.__init__(obj, "answerInlineQuery")  # type: ignore
         return obj
 
     # --- arguments here ---

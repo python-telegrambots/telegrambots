@@ -15,8 +15,8 @@ class SetMyDefaultAdministratorRights(TelegramBotsMethodNoOutput):
 
     def __new__(cls, *args: Any, **kwargs: Any):
         obj = object.__new__(cls)
-        TelegramBotsMethod.__init__(  # type: ignore
-            obj, "setMyDefaultAdministratorRights", [bool]
+        TelegramBotsMethodNoOutput.__init__(  # type: ignore
+            obj, "setMyDefaultAdministratorRights"
         )
         return obj
 

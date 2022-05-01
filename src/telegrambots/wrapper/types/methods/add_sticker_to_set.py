@@ -16,8 +16,8 @@ class AddStickerToSet(TelegramBotsMultipartMethodNoOutput):
 
     def __new__(cls, *args: Any, **kwargs: Any):
         obj = object.__new__(cls)
-        TelegramBotsMultipartMethod.__init__(  # type: ignore
-            obj, "addStickerToSet", [bool]
+        TelegramBotsMultipartMethodNoOutput.__init__(  # type: ignore
+            obj, "addStickerToSet"
         )
         return obj
 

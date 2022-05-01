@@ -17,10 +17,7 @@ async def test_pin_chat_message(test_config: TestConfigs):
     chat_id = test_config.super_group_chat_id_1
     message_id = test_config.super_group_1_existing_message_id
 
-    result = await client(PinChatMessage(chat_id, message_id))
-
-    assert isinstance(result, bool)
-    assert result is True
+    await client(PinChatMessage(chat_id, message_id))
 
     chat = await client(GetChat(chat_id))
 
