@@ -1,5 +1,5 @@
 from typing import Any
-from .types.api_object import TelegramBotsObject, T
+from .types.api_object import TelegramBotsObject
 from .types.objects import Message
 
 
@@ -25,10 +25,10 @@ def serialize(
 
 
 def deserialize(
-    object_type: type[T],
-    data: dict[str, Any] | list[Any],
+    object_type: type[Any],
+    data: Any,
     client: Any = None,
-) -> T:
+) -> Any:
     """deserialize a `TelegramBotsObject` from a dict or list of dicts (`json-like`).
 
     Args:
@@ -39,4 +39,4 @@ def deserialize(
     Returns:
         T: The deserialized object.
     """
-    return TelegramBotsObject.deserialize_to(object_type, data, __custom_types, client)
+    return TelegramBotsObject.deserialize_to(object_type, data, __custom_types, client)  # type: ignore

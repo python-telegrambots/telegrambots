@@ -133,47 +133,56 @@ class TelegramBotsObject(metaclass=ABCMeta):
     ) -> T:
 
         if isinstance(data, list):
-            return [
-                object_type.deserialize(x, custom_types, client) for x in data
-            ]  # type: ignore
+            if issubclass(object_type, TelegramBotsObject):
+                return [
+                    object_type.deserialize(item, custom_types, client)  # type: ignore
+                    for item in data
+                ]  # type: ignore
+            else:
+                return data  # type: ignore
+        elif isinstance(data, dict):  # type: ignore
 
-        fields = dataclasses.fields(object_type)
-        info = {x.metadata["ac_name"]: x.metadata["ac_type"] for x in fields}
+            fields = dataclasses.fields(object_type)
+            info = {x.metadata["ac_name"]: x.metadata["ac_type"] for x in fields}
 
-        if custom_types is not None:
-            for x in custom_types:
+            if custom_types is not None:
+                for x in custom_types:
+                    if x in info:
+                        info[x] = custom_types[x]
+
+            name_replacements: dict[str, str] = {
+                x.metadata["ac_name"]: x.name
+                for x in fields
+                if x.name != x.metadata["ac_name"]
+            }
+
+            new_data = {}
+            for x in data:
                 if x in info:
-                    info[x] = custom_types[x]
 
-        name_replacements: dict[str, str] = {
-            x.metadata["ac_name"]: x.name
-            for x in fields
-            if x.name != x.metadata["ac_name"]
-        }
+                    if len(info[x]) > 1:
+                        # it occurs only ones: Message | bool
+                        if isinstance(data[x], dict):
+                            type_to_convert: type[TelegramBotsObject] = next(
+                                t for t in info[x] if issubclass(t, TelegramBotsObject)
+                            )
+                            new_data[
+                                name_replacements.get(x, x)
+                            ] = type_to_convert.deserialize(
+                                data[x], custom_types, client
+                            )
+                        else:
+                            new_data[name_replacements.get(x, x)] = None
 
-        new_data = {}
-        for x in data:
-            if x in info:
-
-                if len(info[x]) > 1:
-                    # it occurs only ones: Message | bool
-                    if isinstance(data[x], dict):
-                        type_to_convert: type[TelegramBotsObject] = next(
-                            t for t in info[x] if issubclass(t, TelegramBotsObject)
+                    elif issubclass(info[x][0], TelegramBotsObject):
+                        new_data[name_replacements.get(x, x)] = info[x][0].deserialize(
+                            data[x], custom_types, client
                         )
-                        new_data[
-                            name_replacements.get(x, x)
-                        ] = type_to_convert.deserialize(data[x], custom_types, client)
+
                     else:
-                        new_data[name_replacements.get(x, x)] = None
-
-                elif issubclass(info[x][0], TelegramBotsObject):
-                    new_data[name_replacements.get(x, x)] = info[x][0].deserialize(
-                        data[x], custom_types, client
-                    )
-
-                else:
-                    new_data[name_replacements.get(x, x)] = data[x]
+                        new_data[name_replacements.get(x, x)] = data[x]
+        else:
+            return data  # type: ignore
 
         result = object_type(**new_data)
         # set client
