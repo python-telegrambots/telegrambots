@@ -18,6 +18,12 @@ can be installed separately.
 
 _This package contains no full-featured client or bound methods! there're only some classes and a client._
 
+## Consider
+
+This a raw wrapper! To add more functionality, you can use [custom-telegrambots](https://github.com/python-telegrambots/custom-telegrambots).
+
+These two can be installed together ( and they should ).
+
 ## How to
 
 All api methods are available under following namespace:
