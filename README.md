@@ -12,9 +12,9 @@ can be installed separately.
 
 - All objects and methods ( 6.0 ) are implemented in python using `dataclass`es.
 
-- The serialization stuff are done to convert api python objects to json-like (`dict`, `list`) objects and then json-string and reverse.
+- Serialization stuff are done to convert api python objects to json-like (`dict`, `list`) objects and then json-string and reverse.
 
-- A simple and async http client is available using aiohttp to send requests
+- A simple and async http client is available that uses aiohttp to send requests.
 
 _This package contains no full-featured client or bound methods! there're only some classes and a client._
 
@@ -224,7 +224,7 @@ json_object = """
 
 update = deserialize(Update, json.loads(json_object))  # type of Update
 
-dict_like = serialize(update)
+dict_like = json.dumps(serialize(update))
 
 print(dict_like)
 # {'update_id': 10000, 'callback_query': {'id': '4382bfdwdsb323b2d9', 'from': {'id': 1111111, 'is_bot': False, 'first_name': 'Test Firstname', 'last_name': 'Test Lastname', 'username': 'Testusername'}, 'chat_instance': '4382bfdwdsb323b2d9', 'inline_message_id': '1234csdbsk4839', 'data': 'Data from button callback'}}
