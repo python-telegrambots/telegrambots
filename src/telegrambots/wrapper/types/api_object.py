@@ -72,7 +72,7 @@ class TelegramBotsObject(metaclass=ABCMeta):
                 TelegramBotsObject.serialize_dataclass(item, master_obj, parent_key)
                 for item in obj
             ]
-        else:
+        elif isinstance(obj, TelegramBotsObject):
             # Hmmm
             return {
                 x: y
@@ -82,11 +82,13 @@ class TelegramBotsObject(metaclass=ABCMeta):
                         (
                             value.serialize(master_obj, key)
                             if isinstance(value, TelegramBotsObject)
-                            else TelegramBotsObject.serialize_dataclass(
-                                value, master_obj, key  # type: ignore
+                            else (
+                                TelegramBotsObject.serialize_dataclass(
+                                    value, master_obj, key  # type: ignore
+                                )
+                                if isinstance(value, (list, tuple))
+                                else value
                             )
-                            if isinstance(value, (list, tuple))
-                            else value
                         ),
                     )
                     for key, value in (
@@ -97,6 +99,8 @@ class TelegramBotsObject(metaclass=ABCMeta):
                 )
                 if y is not None
             }
+        else:
+            return obj
 
     # endregion
 
