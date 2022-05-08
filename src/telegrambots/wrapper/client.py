@@ -85,6 +85,8 @@ class TelegramBotsClient:
 
             if resp.ok:
                 if isinstance(method, TelegramBotsMethodNoOutput):
+                    if self._session is None:
+                        await session.close()
                     return None
                 else:
                     object_response = method.get_request_result(json_respone, self)

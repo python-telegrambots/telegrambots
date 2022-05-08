@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass, field, fields
+from typing import Any, Optional
 
 from ..._client_utilities import ClientTargetable
 from ..api_object import TelegramBotsObject
@@ -26,6 +26,10 @@ class Update(TelegramBotsObject, ClientTargetable):
     """
 
     # --- properties here ---
+    _update_type: Optional[type[Any]] = field(
+        default=None, init=False, metadata={"ac_type": [type], "ac_name": "update_type"}
+    )
+
     update_id: int = field(metadata={"ac_type": [int], "ac_name": "update_id"})
     """The update's unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you're using [Webhooks](https://core.telegram.org/bots/api/#setwebhook), since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. If there are no new updates for at least a week, then identifier of the next update will be chosen randomly instead of sequentially.
     """
@@ -118,3 +122,22 @@ class Update(TelegramBotsObject, ClientTargetable):
     )
     """*Optional*. A request to join the chat has been sent. The bot must have the *can\\_invite\\_users* administrator right in the chat to receive these updates.
     """
+
+    @property
+    def update_type(self):
+        """The type of the update."""
+        if self._update_type is not None:
+            return self._update_type
+        self._update_type = self._resolve_update_type()
+        return self._update_type
+
+    def _resolve_update_type(self):
+        fs = fields(self)
+        for field in fs:
+            if field.name == "update_id":
+                continue
+
+            field_value = getattr(self, field.name)
+            if field_value is not None:
+                return field.metadata["ac_type"][0]
+        return None
