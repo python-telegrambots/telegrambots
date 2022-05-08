@@ -10,13 +10,13 @@ from .types.api_result import TelegramBotsApiResult
 
 
 class TelegramBotsClient:
-    def __init__(self, token: str):
+    def __init__(self, token: str, session: Optional[aiohttp.ClientSession] = None):
         if not TelegramBotsClient._validate_token(token):
             raise ValueError("Token invalid")
 
         self._token = token
         self._base_url = "https://api.telegram.org/bot{}/".format(token)
-        self._session: Optional[aiohttp.ClientSession] = None
+        self._session: Optional[aiohttp.ClientSession] = session
 
     @overload
     async def __call__(
@@ -38,13 +38,19 @@ class TelegramBotsClient:
         return await self._send(method)  # type: ignore
 
     async def __aenter__(self):
-        self._session = aiohttp.ClientSession()
-        return self
+        if self._session is None:
+            self._session = aiohttp.ClientSession()
+            return self
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any):
         if self._session:
             await self._session.close()
             self._session = None
+
+    @property
+    def session(self) -> Optional[aiohttp.ClientSession]:
+        """Get the session"""
+        return self._session
 
     @overload
     async def _send(
@@ -77,31 +83,25 @@ class TelegramBotsClient:
         for file in files:
             data.add_field(file[0], file[2], filename=file[1])
 
-        session = self._session or aiohttp.ClientSession()
+        assert self._session is not None
+        assert not self._session.closed
 
         try:
-            resp = await session.post(self._base_url + method.endpoint, data=data)
+            resp = await self._session.post(self._base_url + method.endpoint, data=data)
             json_respone = await resp.json()
 
             if resp.ok:
                 if isinstance(method, TelegramBotsMethodNoOutput):
-                    if self._session is None:
-                        await session.close()
                     return None
                 else:
                     object_response = method.get_request_result(json_respone, self)
                     if object_response.ok:
-                        if self._session is None:
-                            await session.close()
-
                         return cast(TResult, object_response.result)
                     raise ApiResponseException(-1, "Wired error")
             else:
                 object_response = TelegramBotsApiResult.deserialize(json_respone)
-                await session.close()
                 raise ApiResponseException.from_result(object_response)  # type: ignore
         except aiohttp.ClientError as e:
-            await session.close()
             raise e
 
     @staticmethod
