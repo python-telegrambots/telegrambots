@@ -61,6 +61,13 @@ class TelegramBotsObject(metaclass=ABCMeta):
         return self.serialize_dataclass(self, master_obj, parent_key)
 
     @staticmethod
+    def __get_fields_values(obj: Any):
+        for x in dataclasses.fields(obj):
+            field_name: str = x.metadata["ac_name"]
+            if not field_name.startswith("_"):
+                yield (field_name, getattr(obj, field_name))
+
+    @staticmethod
     def serialize_dataclass(
         obj: Any | list[Any] | list[list[Any]],
         master_obj: Any = None,
@@ -91,10 +98,7 @@ class TelegramBotsObject(metaclass=ABCMeta):
                             )
                         ),
                     )
-                    for key, value in (
-                        (x.metadata["ac_name"], getattr(obj, x.metadata["ac_name"]))
-                        for x in dataclasses.fields(obj)
-                    )
+                    for key, value in (TelegramBotsObject.__get_fields_values(obj))
                     if value is not None
                 )
                 if y is not None

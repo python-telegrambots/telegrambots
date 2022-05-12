@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field, fields
-from typing import Any, Optional
+from typing import Generic, Optional, TypeVar
 
 from ..._client_utilities import ClientTargetable
 from ..api_object import TelegramBotsObject
@@ -16,8 +16,23 @@ from .chosen_inline_result import ChosenInlineResult
 from .poll_answer import PollAnswer
 
 
+TUpdate = TypeVar(
+    "TUpdate",
+    Message,
+    InlineQuery,
+    CallbackQuery,
+    ShippingQuery,
+    PreCheckoutQuery,
+    Poll,
+    ChatJoinRequest,
+    ChatMemberUpdated,
+    ChosenInlineResult,
+    PollAnswer,
+)
+
+
 @dataclass(init=True, repr=True, slots=True)
-class Update(TelegramBotsObject, ClientTargetable):
+class Update(Generic[TUpdate], TelegramBotsObject, ClientTargetable):
     # --- description here ---
     """This [object](https://core.telegram.org/bots/api/#available-types) represents an incoming update.
     At most **one** of the optional parameters can be present in any given update.
@@ -26,8 +41,16 @@ class Update(TelegramBotsObject, ClientTargetable):
     """
 
     # --- properties here ---
-    _update_type: Optional[type[Any]] = field(
-        default=None, init=False, metadata={"ac_type": [type], "ac_name": "update_type"}
+    _update_type: Optional[type[TUpdate]] = field(
+        default=None,
+        init=False,
+        metadata={"ac_type": [type], "ac_name": "_update_type"},
+    )
+
+    _actual_update: Optional[TUpdate] = field(
+        default=None,
+        init=False,
+        metadata={"ac_type": [type], "ac_name": "_actual_update"},
     )
 
     update_id: int = field(metadata={"ac_type": [int], "ac_name": "update_id"})
@@ -131,6 +154,14 @@ class Update(TelegramBotsObject, ClientTargetable):
         self._update_type = self._resolve_update_type()
         return self._update_type
 
+    @property
+    def actual_update(self):
+        """The actual update - Message, CallbackQuery, etc."""
+        if self._actual_update is not None:
+            return self._actual_update
+        self._resolve_update_type()
+        return self._actual_update
+
     def _resolve_update_type(self):
         fs = fields(self)
         for field in fs:
@@ -139,5 +170,6 @@ class Update(TelegramBotsObject, ClientTargetable):
 
             field_value = getattr(self, field.name)
             if field_value is not None:
+                self._actual_update = field_value
                 return field.metadata["ac_type"][0]
         return None
