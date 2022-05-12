@@ -17,17 +17,17 @@ from .poll_answer import PollAnswer
 
 
 TUpdate = TypeVar(
-    "TUpdate",
-    Message,
-    InlineQuery,
-    CallbackQuery,
-    ShippingQuery,
-    PreCheckoutQuery,
-    Poll,
-    ChatJoinRequest,
-    ChatMemberUpdated,
-    ChosenInlineResult,
-    PollAnswer,
+    "TUpdate"
+    # Message,
+    # InlineQuery,
+    # CallbackQuery,
+    # ShippingQuery,
+    # PreCheckoutQuery,
+    # Poll,
+    # ChatJoinRequest,
+    # ChatMemberUpdated,
+    # ChosenInlineResult,
+    # PollAnswer,
 )
 
 
@@ -147,15 +147,17 @@ class Update(Generic[TUpdate], TelegramBotsObject, ClientTargetable):
     """
 
     @property
-    def update_type(self):
+    def update_type(self) -> type[TUpdate]:
         """The type of the update."""
         if self._update_type is not None:
             return self._update_type
         self._update_type = self._resolve_update_type()
+        if self._update_type is None:
+            raise ValueError("Unable to resolve update type")
         return self._update_type
 
     @property
-    def actual_update(self):
+    def actual_update(self) -> TUpdate:
         """The actual update - Message, CallbackQuery, etc."""
         if self._actual_update is not None:
             return self._actual_update
